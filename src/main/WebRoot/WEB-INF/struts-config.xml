@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+	<data-sources />
+	
+	<form-beans>
+		<form-bean name="IndexForm"		type="com.fb.form.basic.IndexForm" />
+		<form-bean name="NavForm"		type="com.fb.form.basic.NavForm" />
+		<form-bean name="AuthForm"		type="com.fb.form.basic.AuthForm" />
+		<form-bean name="ConfigForm"	type="com.fb.form.basic.ConfigForm" />
+		<form-bean name="FuncForm"		type="com.fb.form.basic.FuncForm" />
+		<form-bean name="CustForm"		type="com.fb.form.basic.CustForm" />
+		<form-bean name="ProdForm"		type="com.fb.form.basic.ProdForm" />
+		<form-bean name="FactForm"		type="com.fb.form.basic.FactForm" />
+		<form-bean name="OfferQryForm"	type="com.fb.form.offer.QryForm" />
+		<form-bean name="OfferForm"		type="com.fb.form.offer.OfferForm" />
+		<form-bean name="PurchaseForm"	type="com.fb.form.purchase.PurchaseForm" />
+		<form-bean name="StockForm"		type="com.fb.form.stock.StockForm" />
+	</form-beans>
+	<global-exceptions />
+	<global-forwards />
+
+	<action-mappings>
+		<action attribute="IndexForm" input="/Login.jsp" name="IndexForm" scope="session" parameter="state" path="/index" type="com.fb.action.basic.IndexAction">
+			<forward name="login"		path="/Login.jsp"/>
+			<forward name="logout"		path="/Logout.jsp"/>
+			<forward name="index"		path="/index.html"/>
+		</action>
+		<action input="/Nav.jsp" name="NavForm" scope="session" path="/nav" type="com.fb.action.basic.NavAction">
+			<forward name="init"		path="/Nav.jsp"/>
+		</action>
+		<action attribute="ConfigForm" input="/pages/basic/Config.jsp" name="ConfigForm" scope="session" parameter="state" path="/config" type="com.fb.action.basic.ConfigAction">
+			<forward name="init"		path="/pages/basic/Config.jsp"/>
+		</action>
+		<action attribute="AuthForm" input="/pages/basic/Auth.jsp" name="AuthForm" scope="session" parameter="state" path="/auth" type="com.fb.action.basic.AuthAction">
+			<forward name="init"		path="/pages/basic/Auth.jsp"/>
+		</action>
+		<action attribute="FuncForm" input="/pages/basic/Func.jsp" name="FuncForm" scope="session" parameter="state" path="/func" type="com.fb.action.basic.FuncAction">
+			<forward name="init"		path="/pages/basic/Func.jsp"/>
+			<forward name="funcForm"	path="/pages/basic/FuncForm.jsp" />
+			<forward name="menuForm"	path="/pages/basic/MenuForm.jsp" />
+		</action>
+		<action attribute="CustForm" input="/pages/basic/Cust.jsp" name="CustForm" scope="session" parameter="state" path="/cust" type="com.fb.action.basic.CustAction">
+			<forward name="init"		path="/pages/basic/Cust.jsp"/>
+			<forward name="form"		path="/pages/basic/CustForm.jsp" />
+		</action>
+		<action attribute="ProdForm" input="/pages/basic/Prod.jsp" name="ProdForm" scope="session" parameter="state" path="/prod" type="com.fb.action.basic.ProdAction">
+			<forward name="init"		path="/pages/basic/Prod.jsp"/>
+			<forward name="form"		path="/pages/basic/ProdForm.jsp" />
+		</action>
+		<action attribute="FactForm" input="/pages/basic/Fact.jsp" name="FactForm" scope="session" parameter="state" path="/fact" type="com.fb.action.basic.FactAction">
+			<forward name="init"		path="/pages/basic/Fact.jsp"/>
+			<forward name="form"		path="/pages/basic/FactForm.jsp" />
+		</action>
+		<action attribute="OfferQryForm" input="/pages/offer/Qry.jsp" name="OfferQryForm" scope="session" parameter="state" path="/offerQry" type="com.fb.action.offer.QryAction">
+			<forward name="init"		path="/pages/offer/Qry.jsp" />
+		</action>
+		<action attribute="OfferForm" input="/pages/offer/Offer.jsp" name="OfferForm" scope="session" parameter="state" path="/offer" type="com.fb.action.offer.OfferAction">
+			<forward name="query"		path="/pages/offer/Offer.jsp" />
+			<forward name="offerlist"	path="/pages/offer/OfferList.jsp" />
+			<forward name="form"		path="/pages/offer/OfferForm.jsp" />
+			<forward name="custlist"	path="/pages/offer/CustList.jsp" />
+			<forward name="unreceived"	path="/pages/offer/UnReceivedOfferList.jsp" />
+			<forward name="modify"		path="/pages/offer/OfferModify.jsp" />
+		</action>
+		<action attribute="PurchaseForm" input="/pages/purchase/Purchase.jsp" name="PurchaseForm" scope="session" parameter="state" path="/purchase" type="com.fb.action.purchase.PurchaseAction">
+			<forward name="query"			path="/pages/purchase/Purchase.jsp" />
+			<forward name="purchaselist"	path="/pages/purchase/PurchaseList.jsp" />
+			<forward name="form"			path="/pages/purchase/PurchaseForm.jsp" />
+			<forward name="factlist"		path="/pages/purchase/FactList.jsp" />
+		</action>
+		<action attribute="StockForm" input="/pages/stock/Stock.jsp" name="StockForm" scope="session" parameter="state" path="/stock" type="com.fb.action.stock.StockAction">
+			<forward name="init"		path="/pages/stock/Stock.jsp"/>
+			<forward name="initAdjust"	path="/pages/stock/AdjustQty.jsp"/>
+		</action>
+	</action-mappings>
+
+	<message-resources parameter="ApplicationResources" />
+
+</struts-config>

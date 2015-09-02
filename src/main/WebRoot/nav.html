@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache, must-revalidate">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>FamilyBiz Application</title>
+<base target="mainFrame" />
+<link rel="stylesheet" type="text/css" href="styles/style.css"/>
+<link rel="stylesheet" type="text/css" href="styles/jquery/jquery.treeview.css"/>
+<script type="text/javascript" src="scripts/jquery/jquery-1.4.2.js"></script>
+<script type="text/javascript" src="scripts/jquery/jquery.treeview.js"></script>
+<script>
+$(document).ready(function(){
+	$("#func").treeview({
+		animated: "fast",
+		control: "#treecontrol"
+	});
+});
+</script>
+</head>
+<body>
+<div id="treecontrol" align="right">
+<img src="images/jquery/treeview/minus.gif" border="0"/> <a title="全部收回" href="#">全部收回</a>
+<img src="images/jquery/treeview/plus.gif" border="0"/> <a title="全部展開" href="#">全部展開</a>
+<!-- a title="全部展開/全部收回" href="#">全部展開/全部收回</a-->
+</div>
+<ul id="func" class="filetree">
+<li><span class="folder">基本資料</span>
+<ul>
+  <li><span class="file"><a href="cust.do?state=init">客戶資料維護</a></span></li>
+  <li><span class="file"><a href="prod.do?state=init">產品資料維護</a></span></li>
+  <li><span class="file"><a href="fact.do?state=init">廠商資料維護</a></span></li>
+</ul>
+</li>
+<li><span class="folder">銷貨管理</span>
+<ul>
+  <li><span class="file"><a href="offer.do?state=initCreate">新增出貨單</a></span></li>
+  <li><span class="file"><a href="offer.do?state=initCreate&back=Y">新增銷貨退回</a></span></li>
+  <li><span class="file"><a href="offer.do?state=initQuery">查詢出貨單</a></span></li>
+  <li><span class="file"><a href="offer.do?state=initQuery&back=Y">查詢銷貨退回</a></span></li>
+  <li><span class="file"><a href="offer.do?state=initQueryUnReceived">應收帳款查詢及列印</a></span></li>
+</ul>
+</li>
+<li><span class="folder">進貨管理</span>
+<ul>
+  <li><span class="file"><a href="purchase.do?state=initCreate">新增進貨單</a></span></li>
+  <li><span class="file"><a href="purchase.do?state=initCreate&back=Y">新增進貨退出</a></span></li>
+  <li><span class="file"><a href="purchase.do?state=initQuery">查詢進貨單</a></span></li>
+  <li><span class="file"><a href="purchase.do?state=initQuery&back=Y">查詢進貨退出</a></span></li>
+</ul>
+</li>
+<li><span class="folder">各項查詢</span>
+<ul>
+  <li><span class="file"><a href="offerQry.do?state=init#qryPrice">查詢最新商品售價</a></span></li>
+  <li><span class="file"><a href="offerQry.do?state=init#qryProdOffers">查詢近半年商品出貨記錄</a></span></li>
+  <li><span class="file"><a href="offerQry.do?state=init#qrySale">查詢當月銷貨狀況</a></span></li>
+</ul>
+</li>
+<li class="closed"><span class="folder">庫存管理</span>
+<ul>
+  <li><span class="file"><a href="stock.do?state=initAdjustQty">庫存調整</a></span></li>
+  <li><span class="file"><a href="stock.do?state=init">查詢產品庫存量</a></span></li>
+</ul>
+</li>
+<li><span class="folder">系統管理</span>
+<ul>
+  <li><span class="file"><a href="config.do?state=init">系統設定</a></span></li>
+</ul>
+</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" >
+			<value>classpath:fb.properties</value>
+		</property>
+	</bean>
+
+	<bean id="sheetUtil" singleton="true" class="com.fb.util.SheetUtil">
+		<property name="sheetPageWidth"				value="${sheet.page.width}" />
+		<property name="sheetPageHeight"			value="${sheet.page.height}" />
+		<property name="sheetBorder"				value="${sheet.table.border}" />
+		<property name="sheetMarginLeft"			value="${sheet.margin.left}" />
+		<property name="sheetMarginRight"			value="${sheet.margin.right}" />
+		<property name="sheetMarginTop"				value="${sheet.margin.top}" />
+		<property name="sheetMarginBottom"			value="${sheet.margin.bottom}" />
+		<property name="sheetFontFile"				value="${sheet.font.file}" />
+		<property name="sheetBaseFontSize"			value="${sheet.font.basesize}" />
+		<property name="sheetRowCount"				value="${sheet.row.count}" />
+		<property name="sheetRowFixedHeight"		value="${sheet.row.fixed.height}" />
+		<property name="serviceFactory"				ref="serviceFactoryProxy" />
+	</bean>
+
+	<!-- iBatis SqlMap Config file -->
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="WEB-INF/ibatis-config.xml" />
+	</bean>
+
+	<!-- Data Sources -->
+	<bean id="dsFB" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/familybiz" />
+	</bean>
+	
+	<!-- DAOs -->
+	<bean id="daoFB" class="com.fb.dao.FBDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+		<property name="dataSource" ref="dsFB" />
+	</bean>
+
+	<!-- Transaction Managers -->
+	<bean id="txmFB" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dsFB" />
+	</bean>
+		
+	<!-- Services -->
+	<bean id="serviceParent" abstract="true" class="com.fb.service.impl.ServiceImpl">
+		<property name="serviceFactory" ref="serviceFactoryProxy" />
+		<property name="fbDao" ref="daoFB" />
+	</bean>
+	
+	<bean id="serviceProxyParent" abstract="true" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="txmFB" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED, -Exception,-org.springframework.dao.DataAccessException</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Service Factory -->
+	<bean id="serviceFactoryProxy" class="com.fb.service.impl.ServiceFactoryImpl" />
+
+	<!-- CommonService -->
+	<bean id="Common" parent="serviceParent" singleton="false" class="com.fb.service.impl.CommonServiceImpl" />
+	<bean id="CommonProxy" parent="serviceProxyParent">
+		<property name="target" ref="Common" />
+	</bean>
+	
+	<!-- AuthenticationService -->
+	<bean id="Authentication" parent="serviceParent" singleton="false" class="com.fb.service.impl.AuthenticationServiceImpl" />
+	<bean id="AuthenticationProxy" parent="serviceProxyParent">
+		<property name="target" ref="Authentication" />
+	</bean>
+
+	<!-- AuthenticationService -->
+	<bean id="Account" parent="serviceParent" singleton="false" class="com.fb.service.impl.AccountServiceImpl" />
+	<bean id="AccountProxy" parent="serviceProxyParent">
+		<property name="target" ref="Account" />
+	</bean>
+
+	<!-- FuncService -->
+	<bean id="Func" parent="serviceParent" singleton="false" class="com.fb.service.impl.FuncServiceImpl" />
+	<bean id="FuncProxy" parent="serviceProxyParent">
+		<property name="target" ref="Func" />
+	</bean>
+
+	<!-- CustomerService -->
+	<bean id="Customer" parent="serviceParent" singleton="false" class="com.fb.service.impl.CustomerServiceImpl" />
+	<bean id="CustomerProxy" parent="serviceProxyParent">
+		<property name="target" ref="Customer" />
+	</bean>
+
+	<!-- ProductService -->
+	<bean id="Product" parent="serviceParent" singleton="false" class="com.fb.service.impl.ProductServiceImpl" />
+	<bean id="ProductProxy" parent="serviceProxyParent">
+		<property name="target" ref="Product" />
+	</bean>
+
+	<!-- FactoryService -->
+	<bean id="Factory" parent="serviceParent" singleton="false" class="com.fb.service.impl.FactoryServiceImpl" />
+	<bean id="FactoryProxy" parent="serviceProxyParent">
+		<property name="target" ref="Factory" />
+	</bean>
+
+	<!-- QryPriceService -->
+	<bean id="QryPrice" parent="serviceParent" singleton="false" class="com.fb.service.impl.QryPriceServiceImpl" />
+	<bean id="QryPriceProxy" parent="serviceProxyParent">
+		<property name="target" ref="QryPrice" />
+	</bean>
+
+	<!-- OfferService -->
+	<bean id="Offer" parent="serviceParent" singleton="false" class="com.fb.service.impl.OfferServiceImpl" />
+	<bean id="OfferProxy" parent="serviceProxyParent">
+		<property name="target" ref="Offer" />
+	</bean>
+
+	<!-- PurchaseService -->
+	<bean id="Purchase" parent="serviceParent" singleton="false" class="com.fb.service.impl.PurchaseServiceImpl" />
+	<bean id="PurchaseProxy" parent="serviceProxyParent">
+		<property name="target" ref="Purchase" />
+	</bean>
+
+	<!-- StockService -->
+	<bean id="Stock" parent="serviceParent" singleton="false" class="com.fb.service.impl.StockServiceImpl" />
+	<bean id="StockProxy" parent="serviceProxyParent">
+		<property name="target" ref="Stock" />
+	</bean>
+
+</beans>

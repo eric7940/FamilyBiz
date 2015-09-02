@@ -1,12 +1,10 @@
-*.class
+.tern-project
+bin
+build
+dist
+classes
+env.properties
+src/main/src/ApplicationResources_zh_TW.properties
+src/main/src/log4j.properties
+src/main/src/fb.properties
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
