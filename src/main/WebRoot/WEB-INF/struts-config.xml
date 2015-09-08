@@ -17,6 +17,7 @@
 		<form-bean name="OfferForm"		type="com.fb.form.offer.OfferForm" />
 		<form-bean name="PurchaseForm"	type="com.fb.form.purchase.PurchaseForm" />
 		<form-bean name="StockForm"		type="com.fb.form.stock.StockForm" />
+		<form-bean name="PickForm"		type="com.fb.form.offer.PickForm" />
 	</form-beans>
 	<global-exceptions />
 	<global-forwards />
@@ -73,6 +74,9 @@
 		<action attribute="StockForm" input="/pages/stock/Stock.jsp" name="StockForm" scope="session" parameter="state" path="/stock" type="com.fb.action.stock.StockAction">
 			<forward name="init"		path="/pages/stock/Stock.jsp"/>
 			<forward name="initAdjust"	path="/pages/stock/AdjustQty.jsp"/>
+		</action>
+		<action attribute="PickForm" input="/pages/offer/Pick.jsp" name="PickForm" scope="session" parameter="state" path="/pick" type="com.fb.action.offer.PickAction">
+			<forward name="init"		path="/pages/offer/Pick.jsp"/>
 		</action>
 	</action-mappings>
 

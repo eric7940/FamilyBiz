@@ -18,6 +18,7 @@
 	<typeAlias alias="OfferDetailVO" 	type="com.fb.vo.OfferDetailVO" />
 	<typeAlias alias="PurchaseMasterVO"	type="com.fb.vo.PurchaseMasterVO" />
 	<typeAlias alias="PurchaseDetailVO"	type="com.fb.vo.PurchaseDetailVO" />
+	<typeAlias alias="PickProdVO"		type="com.fb.vo.PickProdVO" />
 
 	<resultMap id="UserResult" class="UserProfVO">
 		<result property="userId"		column="U.USER_ID"/>
@@ -140,6 +141,16 @@
 		<result property="amt"			column="M.AMT"/>
 		<result property="discount"		column="M.DISCOUNT"/>
 		<result property="receiveAmt"	column="M.RECEIVE_AMT"/>
+	</resultMap>
+	<resultMap id="PickProdResult" class="PickProdVO">
+		<result property="prodId"		column="A.PROD_ID"/>
+		<result property="prodNme"		column="A.PROD_NME"/>
+		<result property="unit"			column="A.UNIT"/>
+		<result property="sumQty"		column="A.SUM_QTY"/>
+		<result property="masterId"		column="MASTER_ID"/>
+		<result property="custId"		column="B.CUST_ID"/>
+		<result property="custNme"		column="B.CUST_NME"/>
+		<result property="qty"			column="B.QTY"/>
 	</resultMap>
 
 	<parameterMap id="getSequenceParam" class="map">
@@ -626,5 +637,27 @@
 			DATE_FORMAT(M.OFFER_DATE,'%Y%m') = #month# AND
 			M.CUST_ID = #custId#
 		ORDER BY M.DISCOUNT DESC
+	</select>
+	
+	<select id="selectProdQtyByOfferDate" parameterClass="string" resultMap="PickProdResult">
+		SELECT 
+		    A.PROD_ID,
+		    A.PROD_NME,
+		    A.UNIT,
+		    A.SUM_QTY,
+		    B.ID MASTER_ID,
+		    B.CUST_ID,
+		    B.CUST_NME,
+		    B.QTY
+		FROM
+		    (SELECT D.MASTER_ID, D.PROD_ID, P.PROD_NME, P.UNIT, SUM(D.QTY) SUM_QTY
+		    FROM TB_OFFER_DETAIL D, TB_PROD_PROF P
+		    WHERE D.PROD_ID = P.PROD_ID AND D.MASTER_ID IN (
+		    	SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D') GROUP BY D.PROD_ID) A,
+		    (SELECT M.ID, M.CUST_ID, C.CUST_NME, D.PROD_ID, D.QTY
+		    FROM TB_OFFER_MASTER M, TB_OFFER_DETAIL D, TB_CUST_PROF C WHERE D.MASTER_ID IN (
+		        SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D') AND M.ID = D.MASTER_ID AND M.CUST_ID = C.CUST_ID) B
+		WHERE A.PROD_ID = B.PROD_ID
+		ORDER BY A.PROD_NME
 	</select>
 </sqlMap>
