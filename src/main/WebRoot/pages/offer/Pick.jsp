@@ -25,7 +25,7 @@
 
 <p>
 以出貨日來查詢：
-<input type="text" name="offerDate" id="offerDate" size="9"/><script language="JavaScript">new tcal ({'controlname': 'offerDate'});</script>
+<html:text property="offerDate" styleId="offerDate" maxlength="10"/><script language="JavaScript">new tcal ({'controlname': 'offerDate'});</script>
 <input type="submit" value="<bean:message key="all.btn.4"/>"/>
 <logic:notEqual name="OFFER_BACK" scope="session" value="Y">
 <input type="button" value="<bean:message key="all.btn.7"/>" onclick="printPick()">
@@ -33,27 +33,35 @@
 </p>
 <hr>
 
-<span id="result" style="display:none;">
+<span id="result" >
 <table id="tb" class="grid tablesorter" cellspacing="0" cellpadding="1" border="1" width="800">
 <thead>
 <tr>
-<th width="40"><bean:message key="all.column.prod.2"/></th>
-<th width="480"><bean:message key="all.column.prod.3"/></th>
-<th width="80"><bean:message key="all.column.offer.9"/></th>
-<th width="120"><bean:message key="all.column.offer.3"/></th>
-<th width="120"><bean:message key="all.column.cust.2"/></th>
+<th width="35%"><bean:message key="all.column.prod.2"/></th>
+<th width="5%"><bean:message key="all.column.prod.3"/></th>
+<th width="10%"><bean:message key="all.column.offer.9"/></th>
+<th width="50%">details</th>
 </tr>
 </thead>
 
 <tbody>
 <logic:iterate id="prod" name="form" property="products" indexId="idx">
+<bean:size id="sizeOfOffers" name="prod" property="offers"/> 
 <tr>
 <td><bean:write name="prod" property="prodNme"/></td>
 <td align="center"><bean:write name="prod" property="unit"/></td>
 <td align="right"><bean:write name="prod" property="sumQty"/></td>
-<td align="right"><bean:write name="prod" property="masterId"/></td>
-<td align="right"><bean:write name="prod" property="custNme"/></td>
-<td align="right"><bean:write name="prod" property="qty"/></td>
+<td>
+	<table id="tb2" class="grid tablesorter" cellspacing="0" cellpadding="1" border="1" width="100%">
+	<logic:iterate id="offer" name="prod" property="offers" indexId="idx2">
+	<tr>
+	<td width="40%" align="right"><bean:write name="offer" property="masterId"/></td>
+	<td width="40%" align="right"><bean:write name="offer" property="custNme"/></td>
+	<td width="20%" align="right"><bean:write name="offer" property="qty"/></td>
+	</tr>
+	</logic:iterate>
+	</table>
+</td>
 </tr>
 </logic:iterate>
 </tbody>
@@ -70,75 +78,6 @@
 
 <script type="text/javascript">
 <%@ include file="/pages/inc/message.js"%>
-
-$().ready(function() {
-	$("#offerDate").val(getToday());
-});
-
-function callbackQueryOffer() {
-	if (httpreq.readyState == 4) {
-		if (httpreq.status == 200) {
-			var response = httpreq.responseText;
-			var rows = response.split('\n');
-			for(var i = 0; i < rows.length; i++){ 
-				if (rows[i] == '') continue;
-				var data = rows[i].split('=');
-				responseMap.put(data[0], data[1]);
-			}
-			if (processQueryResult() == true) {
-				displayObj("result");
-			} else {
-				hiddenObj("result");
-				resetQuery();
-			}
-		} else {
-			alert('檢核發生問題\n\n' + httpreq.status + '\n' + httpreq.responseText);
-			hiddenObj("result");
-		}				
-	}
-}
-
-function processQueryResult() {
-    var errCde = responseMap.get("errCde");
-    var errMsg = responseMap.get("errMsg");
-    if (errCde != "00") {
-		alert(errMsg);
-		return false;
-    }
-
-    var rowCount = responseMap.get("rowCount");
-	if (rowCount > 1) {
-		var src = '<html:rewrite page="/offer.do"/>';
-		var feeid = responseMap.get("custId") == 'null'? responseMap.get("startDate") + ';' + responseMap.get("endDate"): responseMap.get("custId");
-		var rtnValue = openDialogWindow(src, feeid, "getOfferList", 700, 400);
-		if (rtnValue == null || rtnValue == '') {
-			return false;
-		}
-		
-		var rowData = new Map();
-		var rows = rtnValue.split('\n');
-		for(var i = 0; i < rows.length; i++){ 
-			if (rows[i] == '') continue;
-			var data = rows[i].split('=');
-			rowData.put(data[0], data[1]);
-		}
-		setOfferData(rowData);
-		return true;
-	} else {
-		setOfferData(responseMap);
-		return true;
-	}		
-}
-
-function resetQuery() {
-	$("#qCustId").val('');
-	$("#qCustNme").val('');
-	document.getElementById('qCustNme').focus();
-}
-
-
-
-
 
 function printPick() {
 	if (isHiddenObj('result') == true) {

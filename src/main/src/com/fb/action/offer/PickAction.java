@@ -1,6 +1,7 @@
 package com.fb.action.offer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ public class PickAction extends BaseDispatchAction {
 			HttpServletResponse response) throws Exception {
 	
 		PickForm formBean = (PickForm) form;
+		formBean.setOfferDate(DateUtil.getDateString(new Date()));
 		formBean.setProducts(new ArrayList<PickProdVO>());
 		return mapping.findForward("init");
 	}
@@ -40,11 +42,11 @@ public class PickAction extends BaseDispatchAction {
 
 		ActionMessages messages = new ActionMessages();
 		logger.info("query start");
-		String offerDate = request.getParameter("offerDate");
-
+		
 		try {
 			PickForm formBean = (PickForm)form;
-			
+			String offerDate = formBean.getOfferDate();
+	
 			OfferService service = (OfferService) getServiceFactory().getService("Offer");
 			List<PickProdVO> prods = service.getProdQty(DateUtil.getDateObject(offerDate));
 			formBean.setProducts(prods);

@@ -10,10 +10,7 @@ public class PickProdVO implements Serializable{
 	private String prodNme;
 	private String unit;
 	private Double sumQty;
-	private String masterId;
-	private Integer custId;
-	private String custNme;
-	private Double qty;
+	private List<PickOfferVO> offers;
 		
 	public Integer getProdId() {
 		return prodId;
@@ -47,28 +44,13 @@ public class PickProdVO implements Serializable{
 		this.sumQty = sumQty;
 	}
 
-	public String getMasterId() {
-		return masterId;
+	public List<PickOfferVO> getOffers() {
+		return offers;
 	}
-	public void setMasterId(String masterId) {
-		this.masterId = masterId;
+
+	public void setOffers(List<PickOfferVO> offers) {
+		this.offers = offers;
 	}
-	public Integer getCustId() {
-		return custId;
-	}
-	public void setCustId(Integer custId) {
-		this.custId = custId;
-	}
-	public String getCustNme() {
-		return custNme;
-	}
-	public void setCustNme(String custNme) {
-		this.custNme = custNme;
-	}
-	public Double getQty() {
-		return qty;
-	}
-	public void setQty(Double qty) {
-		this.qty = qty;
-	}
+
+
 }

@@ -19,6 +19,7 @@
 	<typeAlias alias="PurchaseMasterVO"	type="com.fb.vo.PurchaseMasterVO" />
 	<typeAlias alias="PurchaseDetailVO"	type="com.fb.vo.PurchaseDetailVO" />
 	<typeAlias alias="PickProdVO"		type="com.fb.vo.PickProdVO" />
+	<typeAlias alias="PickOfferVO"		type="com.fb.vo.PickOfferVO" />
 
 	<resultMap id="UserResult" class="UserProfVO">
 		<result property="userId"		column="U.USER_ID"/>
@@ -142,11 +143,14 @@
 		<result property="discount"		column="M.DISCOUNT"/>
 		<result property="receiveAmt"	column="M.RECEIVE_AMT"/>
 	</resultMap>
-	<resultMap id="PickProdResult" class="PickProdVO">
+	<resultMap id="PickProdResult" class="PickProdVO" groupBy="prodId">
 		<result property="prodId"		column="A.PROD_ID"/>
 		<result property="prodNme"		column="A.PROD_NME"/>
 		<result property="unit"			column="A.UNIT"/>
 		<result property="sumQty"		column="A.SUM_QTY"/>
+		<result property="offers"		resultMap="FB.PickOfferResult"/>
+	</resultMap>
+	<resultMap id="PickOfferResult" class="PickOfferVO">
 		<result property="masterId"		column="MASTER_ID"/>
 		<result property="custId"		column="B.CUST_ID"/>
 		<result property="custNme"		column="B.CUST_NME"/>
