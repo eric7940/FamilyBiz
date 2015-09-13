@@ -3,7 +3,6 @@ package com.fb.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-//import com.itextpdf.text.pdf.PdfWriter;
 
 public class PickSheetServlet extends HttpServlet {
 	
@@ -38,8 +36,7 @@ public class PickSheetServlet extends HttpServlet {
 
 	protected static Logger logger = Logger.getLogger(PickSheetServlet.class);
 
-	private static DecimalFormat df = new DecimalFormat("#0.00");
-	private static int rowSize = 18;
+	private static int rowSize = 24;
 	
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request,
@@ -100,7 +97,6 @@ public class PickSheetServlet extends HttpServlet {
 		PdfWriter.getInstance(document, baos);
 
 		Date today = new Date();
-		float width[] = {1.8f, 1.4f, 1.8f};
 		
 		document.open();
 		boolean isBorder = SheetUtil.isSheetBorder();
@@ -115,8 +111,6 @@ public class PickSheetServlet extends HttpServlet {
 			rowCount += prod.getOffers().size();
 			if (prodIdx == 0 || rowCount > rowSize) {
 				document.newPage();
-
-				document.add(SheetUtil.buildTitleTable("撿貨單", width));
 				document.add(buildPrintTable(today));
 				
 				rowCount = prod.getOffers().size();
@@ -125,9 +119,7 @@ public class PickSheetServlet extends HttpServlet {
 				newPage = false;
 			}
 			
-			PdfPTable o = buildDetailTable(prod, newPage);
-			 
-			document.add(o);
+			document.add(buildDetailTable(prod, newPage));
 		} 
 		
 		(new SheetUtil()).setSheetBorder(isBorder);
@@ -137,19 +129,15 @@ public class PickSheetServlet extends HttpServlet {
 	}
 
 	private PdfPTable buildPrintTable(Date date) throws FamilyBizException {
-		float width[] = {5f, 5f};
+		float width[] = {1f};
 		PdfPTable table = SheetUtil.getTableInstance(width);
-
-		PdfPCell cell1 = new PdfPCell();
-		cell1.setBorder(PdfPCell.NO_BORDER);
-		cell1.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
 
 		PdfPCell cell2 = new PdfPCell();
 		cell2.setBorder(PdfPCell.NO_BORDER);
 		cell2.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
 		
-		cell1.setPhrase(new Phrase("列印日期：" + DateUtil.getDateString(date), SheetUtil.getTitleFont3()));
-		table.addCell(cell1);
+		cell2.setPhrase(new Phrase("統計時間：" + DateUtil.getDateTimeString(date), SheetUtil.getTDFont()));
+		table.addCell(cell2);
 
 		return table;
 	}
@@ -157,33 +145,35 @@ public class PickSheetServlet extends HttpServlet {
 	private PdfPTable buildDetailTable(PickProdVO prod, boolean newPage) throws FamilyBizException {
 		float width[] = {1.3f, 0.4f, 0.8f, 1.5f};
 		PdfPTable table = SheetUtil.getTableInstance(width);
-
+		
 		PdfPCell thCell = new PdfPCell();
 		thCell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-		
-		PdfPCell tdCell1 = new PdfPCell();
+		thCell.setBorder(PdfPCell.NO_BORDER);
+
+		PdfPCell tdCell1 = SheetUtil.getTableCell(false, true, false, false);
 		tdCell1.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
 		tdCell1.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
-		tdCell1.setBorder(PdfPCell.NO_BORDER);
-
-		PdfPCell tdCell2 = new PdfPCell();
+		
+		PdfPCell tdCell2 = SheetUtil.getTableCell(false, true, false, false);
 		tdCell2.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
 		tdCell2.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
-		tdCell2.setBorder(PdfPCell.NO_BORDER);
-
-		PdfPCell tdCell3 = new PdfPCell();
+		
+		PdfPCell tdCell3 = SheetUtil.getTableCell(false, true, false, false);
 		tdCell3.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
 		tdCell3.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
-		tdCell3.setBorder(PdfPCell.NO_BORDER);
+		
+		PdfPCell tdCell4 = new PdfPCell();
+		tdCell4.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
+		tdCell4.setBorder(PdfPCell.NO_BORDER);
 
 		if (newPage) {
-			thCell.setPhrase(new Phrase("品名／型號", SheetUtil.getTHFont()));
+			thCell.setPhrase(new Phrase("品名／型號", SheetUtil.getTDFont()));
 			table.addCell(thCell);
-			thCell.setPhrase(new Phrase("單位", SheetUtil.getTHFont()));
+			thCell.setPhrase(new Phrase("單位", SheetUtil.getTDFont()));
 			table.addCell(thCell);
-			thCell.setPhrase(new Phrase("合計", SheetUtil.getTHFont()));
+			thCell.setPhrase(new Phrase("合計", SheetUtil.getTDFont()));
 			table.addCell(thCell);
-			thCell.setPhrase(new Phrase("明細", SheetUtil.getTHFont()));
+			thCell.setPhrase(new Phrase("明細", SheetUtil.getTDFont()));
 			table.addCell(thCell);
 		}
 		
@@ -191,20 +181,25 @@ public class PickSheetServlet extends HttpServlet {
 		table.addCell(tdCell2);
 		tdCell1.setPhrase(new Phrase(prod.getUnit(), SheetUtil.getTDFont()));
 		table.addCell(tdCell1);
-		tdCell3.setPhrase(new Phrase(df.format(prod.getSumQty()), SheetUtil.getTDFont()));
+		tdCell3.setPhrase(new Phrase(prod.getSumQty().toString(), SheetUtil.getTDFont()));
 		table.addCell(tdCell3);
 				
 		float width2[] = {1f, 1.3f, 0.8f};
 		PdfPTable table2 = SheetUtil.getTableInstance(width2);
 		for (PickOfferVO offer : prod.getOffers()) {
-			tdCell3.setPhrase(new Phrase(offer.getMasterId(), SheetUtil.getTDFont()));
-			table2.addCell(tdCell3);
-			tdCell3.setPhrase(new Phrase(offer.getCustNme(), SheetUtil.getTDFont()));
-			table2.addCell(tdCell3);
-			tdCell3.setPhrase(new Phrase(df.format(offer.getQty()), SheetUtil.getTDFont()));
-			table2.addCell(tdCell3);
+			tdCell4.setPhrase(new Phrase(offer.getMasterId(), SheetUtil.getTDFont()));
+			table2.addCell(tdCell4);
+			tdCell4.setPhrase(new Phrase(offer.getCustNme(), SheetUtil.getTDFont()));
+			table2.addCell(tdCell4);
+			tdCell4.setPhrase(new Phrase(offer.getQty().toString(), SheetUtil.getTDFont()));
+			table2.addCell(tdCell4);
 		}
-		table.addCell(table2);
+		PdfPCell nestCell= new PdfPCell(table2);
+		nestCell.setBorderWidthTop(PdfPCell.NO_BORDER);
+		nestCell.setBorderWidthLeft(PdfPCell.NO_BORDER);
+		nestCell.setBorderWidthRight(PdfPCell.NO_BORDER);
+		
+		table.addCell(nestCell);
 
 		return table;
 	}
