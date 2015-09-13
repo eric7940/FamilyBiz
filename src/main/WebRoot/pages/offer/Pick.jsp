@@ -85,7 +85,7 @@ function printPick() {
 		return;
 	}
 
-	//var printWin = openWindow('/fb/offer.sheet?id=' + $("#masterId").html(), 'printOffer', 793, 529);
+	var printWin = openWindow('/fb/pick.sheet?offerDate=' + $("#offerDate").val(), 'printPick', 793, 529);
 }
 
 
