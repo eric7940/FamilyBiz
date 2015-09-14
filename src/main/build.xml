@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="FamilyBiz" basedir="." default="build">
+<project name="FamilyBiz" basedir="." default="all">
 
 	<property file="env.properties" />
-
+	<property file="profile.properties" prefix="profile" />
+			
 	<property name="name"			value="fb"/>
 	<property name="war.dir"		value="WebRoot" />
 	<property name="source.dir"		value="src" />
 	<property name="properties.dir"	value="properties" />
 	<property name="dist.dir"		value="dist" />
-	<property name="scripts.dir"	value="scripts" />
 	<property name="compile.dir"	value="${war.dir}/WEB-INF/classes" />
 	<property name="app.lib.dir"	value="${war.dir}/WEB-INF/lib" />
 
-	<taskdef name="list"		classname="org.apache.catalina.ant.ListTask"/>
-	<taskdef name="deploy"		classname="org.apache.catalina.ant.DeployTask" />
-	<taskdef name="undeploy"	classname="org.apache.catalina.ant.UndeployTask" />
-
-	<property name="log.dir"				value="${server.home}/logs" />
-	<property name="server.lib.dir"			value="${server.home}/lib" />
-	<property name="server.dist.dir"		value="${server.home}/webapps" />
-	<property name="server.url"				value="http://localhost:8080" />
-	<property name="server.mgr.url"			value="${server.url}/manager/html" />
-	<property name="server.mgr.username" 	value="tomcat" />
-	<property name="server.mgr.password" 	value="tomcat" />
-	<property name="server.mgr.update" 		value="true" />
+	<property name="server.lib.dir"			value="${build.server.home}/lib" />
+	
+	<macrodef name="propertycopy">
+        <attribute name="name" />
+        <attribute name="from" />
+        <sequential>
+            <property name="@{name}" value="${@{from}}" />
+        </sequential>
+    </macrodef>
 
 	<tstamp>
 		<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -35,15 +32,15 @@
 		</fileset>
 	</path>
 
-	<path id ="j2ee-classpath">
-		<fileset dir="${server.lib.dir}">
-			<include name="servlet-api.jar" />
-		</fileset>
-	</path>
-
 	<path id ="driver-classpath">
 		<fileset dir="${server.lib.dir}">
 			<include name="commons-dbcp-*.jar" />
+		</fileset>
+	</path>
+
+	<path id ="j2ee-classpath">
+		<fileset dir="${server.lib.dir}">
+			<include name="servlet-api.jar" />
 		</fileset>
 	</path>
 
@@ -57,15 +54,24 @@
 		<delete dir="${dist.dir}"		quiet="true" />
 	</target>
 
-	<target name="compile" depends="init">
+	<target name="config">
+		<propertycopy name="log.dir" from="profile.${env-prefix}.log.dir" />
+		<propertycopy name="sheet.font.file" from="profile.${env-prefix}.sheet.font.file" />
+	</target>
+	
+	<target name="compile" depends="init,config">
+		<echo message="${log.dir}"/>
+		<echo message="${sheet.font.file}"/>
+				
 		<native2ascii src="${properties.dir}" dest="${source.dir}" encoding="UTF-8" includes="**/*_zh_TW.properties"/>
 
-		<copy file="${properties.dir}/log4j.properties"	 tofile="${source.dir}/log4j.properties" overwrite="true" preservelastmodified="true" />
+		<copy file="${properties.dir}/log4j.properties" tofile="${source.dir}/log4j.properties" overwrite="true" preservelastmodified="true" />
 		<replace file="${source.dir}/log4j.properties" token="%log.dir%" value="${log.dir}" encoding="UTF-8" summary="true" />
 
-		<copy file="${properties.dir}/fb.properties"	 tofile="${source.dir}/fb.properties" overwrite="true" preservelastmodified="true" />
+		<copy file="${properties.dir}/fb.properties" tofile="${source.dir}/fb.properties" overwrite="true" preservelastmodified="true" />
+		<replace file="${source.dir}/fb.properties" token="%sheet.font.file%" value="${sheet.font.file}" encoding="UTF-8" summary="true" />
 
-		<javac destdir="${compile.dir}" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true" encoding="UTF-8">
+		<javac destdir="${compile.dir}" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true" encoding="UTF-8" includeAntRuntime="false">
 			<src path="${source.dir}" />
 			<classpath refid="master-classpath" />
 			<classpath refid="j2ee-classpath" />
@@ -92,64 +98,24 @@
 		</war>
 	</target>
 
+	<target name="workflow">
+		<antcall inheritAll="true" target="build"/>
+		<antcall inheritAll="true" target="checksum"/>
+	</target>
+
+	<target name="all">
+		<property name="env-prefix" value="dev" />
+		<antcall inheritAll="true" target="workflow"/>		
+	</target>
+
+	<target name="all.prod">
+		<property name="env-prefix" value="prod" />
+		<antcall inheritAll="true" target="workflow"/>		
+	</target>
+
 	<target name="checksum">
 		<checksum file="${dist.dir}/${name}.war" pattern="{0}  {1}"/>
 		<move file="${dist.dir}/${name}.war.MD5" tofile="${dist.dir}/${name}.md5" overwrite="true" preservelastmodified="true"/>
-	</target>
-
-	<target name="dist" depends="build,checksum,context.status" if="context.deployable">
-		<deploy url="${server.mgr.url}" username="${server.mgr.username}" password="${server.mgr.password}" path="/${name}" update="${server.mgr.update}" war="file:${dist.dir}/${name}.war" />
-	</target>
-
-	<target name="context.status">
-		<property name="running" value="/${name}:running"/>
-		<property name="stopped" value="/${name}:stopped"/>
-
-		<list url="${server.mgr.url}" outputproperty="ctx.status" username="${server.mgr.username}" password="${server.mgr.password}"/>
-
-		<condition property="context.running">
-			<contains string="${ctx.status}" substring="${running}"/>
-		</condition>
-		<condition property="context.stopped">
-			<contains string="${ctx.status}" substring="${stopped}"/>
-		</condition>
-		<condition property="context.notInstalled">
-			<and>
-				<isfalse value="${context.running}"/>
-				<isfalse value="${context.stopped}"/>
-			</and>
-		</condition>
-		<condition property="context.deployable">
-			<or>
-				<istrue value="${context.notInstalled}"/>
-				<and>
-					<istrue value="${context.running}"/>
-					<istrue value="${server.mgr.update}"/>
-				</and>
-				<and>
-					<istrue value="${context.stopped}"/>
-					<istrue value="${server.mgr.update}"/>
-				</and>
-			</or>
-		</condition>
-		<condition property="context.undeployable">
-			<or>
-				<istrue value="${context.running}"/>
-				<istrue value="${context.stopped}"/>
-			</or>
-		</condition>
-	</target>
-
-	<target name="database" description="Initialize database tables">
-		<sql driver="org.gjt.mm.mysql.Driver" url="jdbc:mysql://localhost:3306/fb?useUnicode=true&amp;characterEncoding=utf8" userid="root" password="">
-			<classpath>
-				<pathelement path="${java.class.path}"/>
-				<path refid="driver-classpath"/>
-  			</classpath>
-  			<fileset dir="${scripts.dir}">
-				<include name="*.sql"/>
-			</fileset>
-		</sql>
 	</target>
 
 </project>

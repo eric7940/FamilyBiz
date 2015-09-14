@@ -4,6 +4,7 @@ build
 dist
 classes
 env.properties
+profile.properties
 src/main/src/ApplicationResources_zh_TW.properties
 src/main/src/log4j.properties
 src/main/src/fb.properties

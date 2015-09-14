@@ -82,6 +82,12 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
+	<servlet>
+		<servlet-name>PickSheetServlet</servlet-name>
+		<servlet-class>com.fb.servlet.PickSheetServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>action</servlet-name>
 		<url-pattern>*.do</url-pattern>
@@ -95,6 +101,11 @@
 	<servlet-mapping>
 		<servlet-name>UnReceivedSheetServlet</servlet-name>
 		<url-pattern>/unreceived.sheet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>PickSheetServlet</servlet-name>
+		<url-pattern>/pick.sheet</url-pattern>
 	</servlet-mapping>
 
 	<mime-mapping>

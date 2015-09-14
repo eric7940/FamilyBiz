@@ -46,4 +46,6 @@ public interface OfferService extends Service {
 	public List getTopDiscountCusts(String month) throws FamilyBizException;
 
 	public List getTopDiscountOffers(String month, String custId) throws FamilyBizException;
+	
+	public List getProdQty(Date offerDate) throws FamilyBizException;
 }
