@@ -36,7 +36,7 @@ public class PickSheetServlet extends HttpServlet {
 
 	protected static Logger logger = Logger.getLogger(PickSheetServlet.class);
 
-	private static int rowSize = 24;
+	private static int rowSize = 23;
 	
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request,
@@ -143,7 +143,7 @@ public class PickSheetServlet extends HttpServlet {
 	}
 
 	private PdfPTable buildDetailTable(PickProdVO prod, boolean newPage) throws FamilyBizException {
-		float width[] = {1.3f, 0.4f, 0.8f, 1.5f};
+		float width[] = {0.4f, 0.1f, 0.1f, 0.4f};
 		PdfPTable table = SheetUtil.getTableInstance(width);
 		
 		PdfPCell thCell = new PdfPCell();
@@ -184,7 +184,7 @@ public class PickSheetServlet extends HttpServlet {
 		tdCell3.setPhrase(new Phrase(prod.getSumQty().toString(), SheetUtil.getTDFont()));
 		table.addCell(tdCell3);
 				
-		float width2[] = {1f, 1.3f, 0.8f};
+		float width2[] = {0.3f, 0.5f, 0.2f};
 		PdfPTable table2 = SheetUtil.getTableInstance(width2);
 		for (PickOfferVO offer : prod.getOffers()) {
 			tdCell4.setPhrase(new Phrase(offer.getMasterId(), SheetUtil.getTDFont()));
