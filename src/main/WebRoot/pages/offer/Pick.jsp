@@ -25,14 +25,23 @@
 
 <p>
 以出貨日來查詢：
-<html:text property="offerDate" styleId="offerDate" maxlength="10"/><script language="JavaScript">new tcal ({'controlname': 'offerDate'});</script>
+<html:text property="offerDate" styleId="offerDate" maxlength="10"/><script>new tcal ({'controlname': 'offerDate'});</script>
+
+<input type="button" value="列出當日出貨單所有客戶" onclick="queryCusts(this)"/>
+<logic:equal name="qry_prod_flag" scope="request" value="Y">
+<input id="printBtn" type="button" value="<bean:message key="all.btn.7"/>" onclick="printPick()"/><br/>
+</logic:equal>
+<br/>
+
+<html:hidden styleId="custIds" property="custIds"/>
+<div id="custResult">
+<div id="qryCustsResult"></div>
 <input type="submit" value="<bean:message key="all.btn.4"/>"/>
-<logic:notEqual name="OFFER_BACK" scope="session" value="Y">
-<input type="button" value="<bean:message key="all.btn.7"/>" onclick="printPick()">
-</logic:notEqual>
+</div>
 </p>
 <hr>
 
+<logic:equal name="qry_prod_flag" scope="request" value="Y">
 <span id="result" >
 <table id="tb" class="grid tablesorter" cellspacing="0" cellpadding="1" border="1" width="800">
 <thead>
@@ -67,28 +76,68 @@
 </tbody>
 
 </table>
-
-
 </span>
+</logic:equal>
 
 </td>
 </tr>
 </table>
+
 </html:form>
 
 <script type="text/javascript">
 <%@ include file="/pages/inc/message.js"%>
+
+function queryCusts(btn) {
+	$("#qryCustsResult").html('');
+	$("#custIds").val('');
+	$("#custResult").hide();
+	$("#result").hide();
+	$("#printBtn").hide();
+	$.ajax({
+		url: '<html:rewrite page="/pick.do"/>',
+		data: ({state: "qryCusts", date: $("#offerDate").val()}),
+		success: function(result){
+			if (result != '') {
+				var r = result.split('\n');
+				var ol = "";
+				var custIds = "";
+				for(var i = 1; i < r.length; i++) {
+					if (!r[i]) continue;
+					var d = r[i].split('|');
+					ol += "<input type='checkbox' name='custs' value='" + d[0] + "' checked />" + d[1] + " ";
+					custIds += ',' + d[0];
+				}
+				$("#qryCustsResult").html(ol);
+				$("#custIds").val(custIds);
+				$("#custResult").show();
+				$("#result").hide();
+			} else {
+				alert('無任何出貨資料，請重新操作');
+			}
+		}
+	});
+}
+
 
 function printPick() {
 	if (isHiddenObj('result') == true) {
 		alert('請先查詢');
 		return;
 	}
-
-	var printWin = openWindow('/fb/pick.sheet?offerDate=' + $("#offerDate").val(), 'printPick', 793, 529);
+	var printWin = openWindow('/fb/pick.sheet?offerDate=' + $("#offerDate").val() + '&custs=' + $("#custIds").val(), 'printPick', 793, 529);
 }
+$().ready(function() {
+	$("#custResult").hide();
+});
 
-
+$(".checkbox").change(function() {
+	if(this.checked) {
+		$("#custIds").val($("#custIds").val() + ',' + this.value);
+	} else {
+		$("#custIds").val().replace(',' + this.value, '');
+	}
+});
 </script>
 </body>
 </html>

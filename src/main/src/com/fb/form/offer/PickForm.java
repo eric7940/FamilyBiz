@@ -1,6 +1,5 @@
 package com.fb.form.offer;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.struts.action.ActionForm;
@@ -13,6 +12,7 @@ public class PickForm extends ActionForm {
 
 	private List<PickProdVO> products;
 	private String offerDate;
+	private String custIds;
 	
 	public List<PickProdVO> getProducts() {
 		return products;
@@ -26,5 +26,10 @@ public class PickForm extends ActionForm {
 	public void setOfferDate(String offerDate) {
 		this.offerDate = offerDate;
 	}
-
+	public String getCustIds() {
+		return custIds;
+	}
+	public void setCustIds(String custIds) {
+		this.custIds = custIds;
+	}
 }

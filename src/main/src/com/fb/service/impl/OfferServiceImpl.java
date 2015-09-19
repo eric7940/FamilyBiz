@@ -272,8 +272,16 @@ public class OfferServiceImpl extends ServiceImpl implements OfferService {
 	}
 
 	@Override
-	public List getProdQty(Date offerDate) throws FamilyBizException {
-		return this.getFbDao().queryForList("selectProdQtyByOfferDate", DateUtil.getDateString(offerDate, "yyyy/MM/dd"));
+	public List getCustByOfferDate(Date offerDate) throws FamilyBizException {
+		return this.getFbDao().queryForList("selectCustByOfferDate", DateUtil.getDateString(offerDate, "yyyy/MM/dd"));
+	}
+	
+	@Override
+	public List getProdQty(Date offerDate, List<String> custs) throws FamilyBizException {
+		Map<String,Object> paramMap = new HashMap<String,Object>();
+		paramMap.put("offerDate", DateUtil.getDateString(offerDate, "yyyy/MM/dd"));
+		paramMap.put("custs", custs);
+		return this.getFbDao().queryForList("selectProdQtyByOfferDate", paramMap);
 	}
 
 }

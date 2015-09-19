@@ -143,6 +143,10 @@
 		<result property="discount"		column="M.DISCOUNT"/>
 		<result property="receiveAmt"	column="M.RECEIVE_AMT"/>
 	</resultMap>
+	<resultMap id="PickCustResult" class="CustProfVO">
+		<result property="custId"		column="X.CUST_ID"/>
+		<result property="custNme"		column="Y.CUST_NME"/>
+	</resultMap>
 	<resultMap id="PickProdResult" class="PickProdVO" groupBy="prodId">
 		<result property="prodId"		column="A.PROD_ID"/>
 		<result property="prodNme"		column="A.PROD_NME"/>
@@ -643,7 +647,13 @@
 		ORDER BY M.DISCOUNT DESC
 	</select>
 	
-	<select id="selectProdQtyByOfferDate" parameterClass="string" resultMap="PickProdResult">
+	<select id="selectCustByOfferDate" parameterClass="string" resultMap="PickCustResult">
+		SELECT DISTINCT X.CUST_ID,Y.CUST_NME FROM TB_OFFER_MASTER X, TB_CUST_PROF Y 
+		WHERE X.CUST_ID = Y.CUST_ID AND X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D'
+		ORDER BY X.ID
+	</select>
+	
+	<select id="selectProdQtyByOfferDate" parameterClass="map" resultMap="PickProdResult">
 		SELECT 
 		    A.PROD_ID,
 		    A.PROD_NME,
@@ -657,11 +667,20 @@
 		    (SELECT D.MASTER_ID, D.PROD_ID, P.PROD_NME, P.UNIT, SUM(D.QTY) SUM_QTY
 		    FROM TB_OFFER_DETAIL D, TB_PROD_PROF P
 		    WHERE D.PROD_ID = P.PROD_ID AND D.MASTER_ID IN (
-		    	SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D') GROUP BY D.PROD_ID) A,
+		    	SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D'
+		    	<isNotNull property="custs" prepend="and"> X.CUST_ID IN 
+					<iterate property="custs" open="(" close=")" conjunction="," > #custs[]# </iterate>
+				</isNotNull>
+		    	) GROUP BY D.PROD_ID) A,
 		    (SELECT M.ID, M.CUST_ID, C.CUST_NME, D.PROD_ID, D.QTY
 		    FROM TB_OFFER_MASTER M, TB_OFFER_DETAIL D, TB_CUST_PROF C WHERE D.MASTER_ID IN (
-		        SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D') AND M.ID = D.MASTER_ID AND M.CUST_ID = C.CUST_ID) B
+		        SELECT X.ID FROM TB_OFFER_MASTER X WHERE X.OFFER_DATE = STR_TO_DATE(#offerDate#, '%Y/%m/%d') AND X.STATUS != 'D'
+		    	<isNotNull property="custs" prepend="and"> X.CUST_ID IN 
+					<iterate property="custs" open="(" close=")" conjunction="," > #custs[]# </iterate>
+				</isNotNull>
+		        ) AND M.ID = D.MASTER_ID AND M.CUST_ID = C.CUST_ID) B
 		WHERE A.PROD_ID = B.PROD_ID
 		ORDER BY A.PROD_NME
 	</select>
+	
 </sqlMap>
