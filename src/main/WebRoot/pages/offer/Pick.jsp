@@ -102,7 +102,7 @@ function queryCusts(btn) {
 				var r = result.split('\n');
 				var ol = "";
 				var custIds = "";
-				for(var i = 1; i < r.length; i++) {
+				for(var i = 0; i < r.length; i++) {
 					if (!r[i]) continue;
 					var d = r[i].split('|');
 					ol += "<input type='checkbox' name='custs' value='" + d[0] + "' checked />" + d[1] + " ";
