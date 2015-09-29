@@ -3,6 +3,7 @@ package com.fb.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 import com.fb.service.OfferService;
 import com.fb.util.DateUtil;
@@ -44,9 +46,10 @@ public class PickSheetServlet extends HttpServlet {
 
 		try {
 			String offerDate = request.getParameter("offerDate");
-			
+			String[] custs = StringUtils.tokenizeToStringArray(request.getParameter("custs"), ",");
+
 			OfferService service = (OfferService)SheetUtil.getServiceFactory().getService("Offer");
-			List<PickProdVO> pickProds = service.getProdQty(DateUtil.getDateObject(offerDate));
+			List<PickProdVO> pickProds = service.getProdQty(DateUtil.getDateObject(offerDate), Arrays.asList(custs));
 			
 			Map<String,Object> paramMap = new HashMap<String,Object>();
 			paramMap.put("list", pickProds);

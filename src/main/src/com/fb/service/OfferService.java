@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.fb.util.FamilyBizException;
-import com.fb.vo.CustProfVO;
 import com.fb.vo.OfferDetailVO;
 import com.fb.vo.OfferMasterVO;
 import com.fb.vo.UserProfVO;
@@ -47,5 +46,7 @@ public interface OfferService extends Service {
 
 	public List getTopDiscountOffers(String month, String custId) throws FamilyBizException;
 	
-	public List getProdQty(Date offerDate) throws FamilyBizException;
+	public List getProdQty(Date offerDate, List<String> custs) throws FamilyBizException;
+
+	public List getCustByOfferDate(Date offerDate) throws FamilyBizException;
 }
