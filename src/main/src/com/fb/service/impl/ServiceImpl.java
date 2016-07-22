@@ -37,11 +37,11 @@ public abstract class ServiceImpl implements Service {
 	}
 
 	protected Integer getSequenceNbr(String seqId) throws FamilyBizException {
-		Map<String,String> paramMap = new HashMap<String,String>();
+		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("PI_SEQ_ID", seqId);
 		paramMap.put("PI_SEQ_PREFIX", DateUtil.getDateString(new Date(), "yyyyMMdd"));
 		this.getFbDao().call("getSequence", paramMap);
-		return Integer.valueOf((String) paramMap.get("PO_SEQ_NBR"));
+		return (Integer) paramMap.get("PO_SEQ_NBR");
 	}
 
 }

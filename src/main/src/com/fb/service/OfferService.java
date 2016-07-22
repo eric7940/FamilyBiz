@@ -25,6 +25,8 @@ public interface OfferService extends Service {
 	
 	public List<OfferMasterVO> getOffers(String deliveryUserId, Date offerDate, boolean back) throws FamilyBizException;
 
+	public List<OfferMasterVO> getOffers(String deliveryUserId, Date startDate, Date endDate, boolean back) throws FamilyBizException;
+
 	public String addOffer(OfferMasterVO master, List<OfferDetailVO> details, boolean back) throws FamilyBizException;
 
 	public void modifyOfferReceiveAmt(OfferMasterVO offer) throws FamilyBizException;

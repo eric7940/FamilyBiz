@@ -75,15 +75,20 @@ public class OfferServiceImpl extends ServiceImpl implements OfferService {
 		return this.getFbDao().queryForList("selectOffers", paramMap);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<OfferMasterVO> getOffers(String deliveryUserId, Date offerDate, boolean back) throws FamilyBizException {
+		return getOffers(deliveryUserId, offerDate, offerDate, back);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<OfferMasterVO> getOffers(String deliveryUserId, Date startDate, Date endDate, boolean back) throws FamilyBizException {
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("deliveryUserId", deliveryUserId);
-		paramMap.put("offerDate", offerDate);
+		paramMap.put("startDate", startDate);
+		paramMap.put("endDate", endDate);
 		paramMap.put("back", back? "Y": null);
 		return this.getFbDao().queryForList("selectOffers", paramMap);
 	}
-	
+
 	public String addOffer(OfferMasterVO master, List<OfferDetailVO> details, boolean back) throws FamilyBizException {
 		Integer seqNbr = this.getSequenceNbr("SEQ_TB_OFFER_MASTER_ID");
 		DecimalFormat df = new DecimalFormat("0000"); //todo:

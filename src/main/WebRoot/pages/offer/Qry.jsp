@@ -84,6 +84,28 @@ alert('arguments[0]'+arguments[0]+'\narguments[1]'+arguments[1]+'\narguments[2]'
 
 <hr>
 
+<h3><a name="qryUserOffers"></a>查詢人員送貨總計：</h3>
+<p>
+<table cellspacing="0" cellpadding="0" border="0" width="600">
+<tr>
+<td>
+查詢日期：<input type="text" id="qryUserOffersSDate" name="qryUserOffersSDate" size="9"/><script language="JavaScript">new tcal ({'controlname': 'qryUserOffersSDate'});</script>
+～<input type="text" id="qryUserOffersEDate" name="qryUserOffersEDate" size="9"/><script language="JavaScript">new tcal ({'controlname': 'qryUserOffersEDate'});</script>
+物流士：
+<select name="deliveryUserId" class="select" onChange="qryUserPeriodOffersOnChange(this)">
+<logic:iterate id="deliveryUser" name="form" property="deliveryUsers">
+<option value='<bean:write name="deliveryUser" property="userId"/>'><bean:write name="deliveryUser" property="userNme" /></option>
+</logic:iterate>
+</select>
+</td>
+</tr>
+</table>
+
+<h3>查詢結果：</h3>
+<ol id="qryUserPeriodOffersResult"></ol>
+
+<hr>
+
 <h3><a name="qryUserOffers"></a>查詢當日送貨記錄：</h3>
 <p>
 <table cellspacing="0" cellpadding="0" border="0" width="600">
@@ -318,6 +340,23 @@ function qryProdOffersCustOnBlur(obj) {
 function qrySaleProdOnBlur(obj) {
 	if(obj.value == '') {
 		$("#qrySaleResult").html('');
+	}
+}
+
+function qryUserPeriodOffersOnChange(obj) {
+	if(obj.value != '-') {
+		$.ajax({
+			url: '<html:rewrite page="/offerQry.do"/>',
+			data: ({state: "qryUserPeriodOffers", userId: obj.value, sdate: $("#qryUserOffersSDate").val(), edate: $("#qryUserOffersEDate").val()}),
+			success: function(result){
+				if (result == '') {
+					$("<li>").html(obj.options[obj.selectedIndex].text + " " + $("#qryUserOffersSDate").val() + "～" + $("#qryUserOffersEDate").val() + " 送貨記錄：查無符合資料！").appendTo("#qryUserPeriodOffersResult");
+				} else {
+					$("<li>").html(obj.options[obj.selectedIndex].text + " " + $("#qryUserOffersSDate").val() + "～" + $("#qryUserOffersEDate").val() + " 送貨記錄：").appendTo("#qryUserPeriodOffersResult");
+					$("<ol>").html("總計金額：" + result).appendTo("#qryUserPeriodOffersResult");
+				}
+			}
+		});
 	}
 }
 

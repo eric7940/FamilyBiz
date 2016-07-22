@@ -44,7 +44,7 @@
 <input type="button" value="<bean:message key="offer.btn.1"/>" onclick="resetDetails()">
 <input type="button" value="<bean:message key="offer.btn.2"/>" onclick="openCustList()">
 </div>
-物流士：<html:select property="deliveryUserId" styleClass="select"><html:options collection="deliveryUsers" property="userId" labelProperty="userNme" /></html:select>
+物流士：<html:select styleId="deliveryUserId" property="deliveryUserId" styleClass="select"><html:option value="0">Select Country</html:option><html:options collection="deliveryUsers" property="userId" labelProperty="userNme" /></html:select>
 <table class="sheet" cellspacing="0" cellpadding="1" border="1" width="650">
 <tr>
 <th width="100"><bean:message key="all.column.cust.2"/></th><td width="150" id="custNme"></td>
@@ -375,6 +375,11 @@ function checkDetailQty(objIdx) {
 }
 
 function go(fm) {
+	if ($("#deliveryUserId").val() == '0') {
+		alert('請選擇此出貨單的物流士');
+		$("#deliveryUserId").focus();
+		return false;
+	}
 	if ($("#custId").html() == '') {
 		alert('請選擇此出貨單的客戶');
 		openCustList();

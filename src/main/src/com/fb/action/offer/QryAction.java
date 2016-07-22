@@ -33,6 +33,7 @@ public class QryAction extends BaseDispatchAction {
 
 	private static Logger logger = Logger.getLogger(QryAction.class);
 	private static DecimalFormat df = new DecimalFormat("#0.00");
+	private static DecimalFormat df2 = new DecimalFormat("$#,##0.00");
 	
 	public ActionForward init(ActionMapping mapping,
 			ActionForm form,
@@ -228,6 +229,50 @@ public class QryAction extends BaseDispatchAction {
 		return this.sendAjaxResponse(response, sb.toString());
 	}
 	
+	public ActionForward qryUserPeriodOffers(ActionMapping mapping,
+			ActionForm form,
+			HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		logger.info("qryUserPeriodOffers start");
+		StringBuffer sb = new StringBuffer();
+		try {
+			String userId = request.getParameter("userId");
+			String sdate = request.getParameter("sdate");
+			String edate = request.getParameter("edate");
+
+			logger.info("param: userId=" + userId);
+			logger.info("param: sdate=" + sdate);
+			logger.info("param: edate=" + edate);
+
+			OfferService service = (OfferService) this.getServiceFactory().getService("Offer");
+			List<OfferMasterVO> offers = service.getOffers(userId, DateUtil.getDateObject(sdate), DateUtil.getDateObject(edate), false);
+			
+			if (offers != null && offers.size() > 0) {
+				long total = 0l;
+				Iterator<OfferMasterVO> it = offers.iterator();
+				while(it.hasNext()) {
+					OfferMasterVO master = it.next();
+//					OfferDetailVO detail = (OfferDetailVO) master.getDetails().get(0);
+//					ProdProfVO prod = (ProdProfVO) detail.getProd();
+					total += master.getTotal();
+//					sb.append(master.getId() + "|" + DateUtil.getDateString(master.getOfferDate()) + "|" + master.getCust().getCustNme() + "|" + df.format(master.getTotal()) + "\n");
+				}
+				sb.append(df2.format(total));
+			}
+		} catch (FamilyBizException sce) {
+			logger.error("", sce);
+			sb.append(sce.getMessage());
+		} catch (Exception e) {
+			logger.error("", e);
+			MessageResources mr = this.getResources(request);
+			sb.append(mr.getMessage("all.msg.1"));
+		}
+		
+		logger.info("qryUserOffers end");
+		return this.sendAjaxResponse(response, sb.toString());
+	}
+
 	public ActionForward qryDiscount(ActionMapping mapping,
 			ActionForm form,
 			HttpServletRequest request,

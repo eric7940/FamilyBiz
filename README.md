@@ -1,6 +1,6 @@
 FamilyBiz
 ===============
-Lastest version is **v1.2.0**
+Lastest version is **v1.3.0**
 
 ## Build
 
@@ -18,6 +18,7 @@ Create file **src/main/src/profile.properties**, and set properties for differen
         prod.sheet.font.file=/path/to/your/font.file
 
 ## Version History
+* 2016/07/22 v1.3.0
 * 2015/09/29 v1.2.0
 * 2015/09/15 v1.1.1
 * 2015/09/14 v1.1.0
